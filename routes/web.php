@@ -11,6 +11,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app' => config('app.name'),
+        'env' => app()->environment(),
+        'time' => now()->toIso8601String(),
+    ]);
+})->name('health');
+
 Route::middleware(['auth', 'approved'])->group(function () {
     Route::get('/dashboard', [ProjectController::class, 'dashboard'])->name('dashboard');
     Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
