@@ -138,5 +138,11 @@
                 </div>
             @endforelse
         </div>
+
+        @if ($projects instanceof \Illuminate\Contracts\Pagination\Paginator && $projects->hasPages())
+            <div class="mt-6">
+                {{ $projects->links() }}
+            </div>
+        @endif
     </section>
 @endsection

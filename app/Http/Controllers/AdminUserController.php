@@ -21,20 +21,20 @@ class AdminUserController extends Controller
 
     public function index(Request $request): View
     {
-        $this->ensureAdmin($request);
-
         $users = User::query()
             ->withCount('projects')
             ->withCount('referrals')
             ->withSum('affiliateTransactions', 'amount')
             ->latest()
-            ->get();
+            ->paginate(20, ['*'], 'users_page')
+            ->withQueryString();
 
         $pendingUsers = User::query()
             ->with(['orders', 'referredBy'])
             ->where('account_status', 'pending_payment')
             ->latest()
-            ->get();
+            ->paginate(10, ['*'], 'pending_page')
+            ->withQueryString();
 
         return view('admin.users.index', [
             'users' => $users,
@@ -44,15 +44,11 @@ class AdminUserController extends Controller
 
     public function create(Request $request): View
     {
-        $this->ensureAdmin($request);
-
         return view('admin.users.create');
     }
 
     public function store(Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         $payload = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -74,8 +70,6 @@ class AdminUserController extends Controller
 
     public function edit(User $user, Request $request): View
     {
-        $this->ensureAdmin($request);
-
         $user->loadCount('projects');
         $user->loadCount('referrals');
         $user->loadSum('affiliateTransactions', 'amount');
@@ -88,8 +82,6 @@ class AdminUserController extends Controller
 
     public function update(User $user, Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         $payload = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
@@ -109,8 +101,6 @@ class AdminUserController extends Controller
 
     public function updatePassword(User $user, Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         $payload = $request->validate([
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -124,8 +114,6 @@ class AdminUserController extends Controller
 
     public function destroy(User $user, Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         if ($request->user()->id === $user->id) {
             return back()->withErrors(['user' => 'Admin tidak bisa menghapus akunnya sendiri.']);
         }
@@ -137,15 +125,8 @@ class AdminUserController extends Controller
             ->with('status', 'User berhasil dihapus.');
     }
 
-    protected function ensureAdmin(Request $request): void
-    {
-        abort_unless($request->user()?->isAdmin(), 403);
-    }
-
     public function approve(User $user, Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         $user->update(['account_status' => 'approved']);
         $user->orders()->where('status', 'pending')->update(['status' => 'approved']);
 
@@ -167,8 +148,6 @@ class AdminUserController extends Controller
 
     public function reject(User $user, Request $request): RedirectResponse
     {
-        $this->ensureAdmin($request);
-
         $user->update(['account_status' => 'rejected']);
         $user->orders()->where('status', 'pending')->update(['status' => 'rejected']);
 

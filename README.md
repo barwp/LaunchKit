@@ -206,3 +206,47 @@ Untuk menambah niche baru, cukup:
 3. Jika perlu section baru, tambahkan partial Blade di `resources/views/sections`
 
 Logic utama generator tidak perlu diubah selama struktur config tetap konsisten.
+
+## Production Checklist
+
+Agar siap launch ke banyak user, gunakan baseline berikut:
+
+```bash
+cp .env.production.example .env
+composer install --no-dev --optimize-autoloader
+npm install
+npm run build
+php artisan key:generate
+php artisan migrate --force
+php artisan storage:link
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+Rekomendasi production:
+
+- `APP_DEBUG=false`
+- gunakan `MySQL 8+`
+- arahkan web root ke folder `public`
+- aktifkan HTTPS
+- jalankan queue worker untuk `QUEUE_CONNECTION=database`
+- pastikan cron menjalankan:
+
+```bash
+* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
+```
+
+- jalankan queue worker:
+
+```bash
+php artisan queue:work --queue=default --sleep=1 --tries=3
+```
+
+Hardening yang sudah dipasang di app:
+
+- route admin dilindungi middleware admin
+- route app utama dilindungi middleware approved account
+- endpoint sensitif diberi throttle
+- response sekarang mengirim security headers dasar
+- dashboard dan admin user list sudah dipagination agar lebih aman saat data bertambah

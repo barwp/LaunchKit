@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Launchkit by novadigital.id</title>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,700,800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #07111f;
+            --bg-soft: rgba(15, 23, 42, 0.9);
+            --panel: rgba(15, 23, 42, 0.72);
+            --line: rgba(255, 255, 255, 0.1);
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --primary: #34d399;
+            --accent: #38bdf8;
+            --danger: #fda4af;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(52, 211, 153, 0.16), transparent 24%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 22%),
+                linear-gradient(180deg, #020617 0%, #0f172a 100%);
+        }
+
+        a { color: inherit; text-decoration: none; }
+
+        .shell {
+            width: min(1200px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 24px 0 56px;
+        }
+
+        .panel, .hero {
+            border: 1px solid var(--line);
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            box-shadow: 0 24px 80px rgba(2, 6, 23, 0.35);
+        }
+
+        .nav {
+            position: sticky;
+            top: 16px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #022c22;
+            background: linear-gradient(180deg, #6ee7b7, #34d399);
+        }
+
+        .brand-copy strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+        }
+
+        .brand-copy span {
+            display: block;
+            margin-top: 2px;
+            font-size: 18px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links a, .menu a {
+            padding: 11px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            transition: 160ms ease;
+        }
+
+        .nav-links a:hover, .menu a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 800;
+            transition: transform 160ms ease, opacity 160ms ease;
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #6ee7b7, #34d399);
+            color: #022c22;
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.04);
+            color: white;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .mobile-toggle {
+            display: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.04);
+            color: white;
+            font-size: 22px;
+        }
+
+        .menu {
+            display: none;
+            margin-top: 12px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            background: rgba(2, 6, 23, 0.92);
+        }
+
+        .menu.is-open { display: grid; gap: 8px; }
+
+        .hero-wrap {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: 1.08fr 0.92fr;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 32px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            border: 1px solid rgba(52,211,153,0.2);
+            background: rgba(52,211,153,0.1);
+            color: var(--primary);
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 22px 0 0;
+            font-size: clamp(2.7rem, 7vw, 5.6rem);
+            line-height: 0.98;
+            letter-spacing: -0.06em;
+        }
+
+        .lead {
+            margin-top: 20px;
+            max-width: 760px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+
+        .cta-row, .chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.04);
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .preview-grid {
+            display: grid;
+            gap: 0;
+            grid-template-columns: 1.2fr 0.8fr;
+            overflow: hidden;
+        }
+
+        .preview-left, .preview-right { padding: 18px; }
+        .preview-left { border-right: 1px solid var(--line); background: rgba(2, 6, 23, 0.28); }
+        .preview-right { background: rgba(2, 6, 23, 0.18); }
+
+        .fake-browser {
+            padding: 16px;
+            border-radius: 28px;
+            border: 1px solid var(--line);
+            background: #08111f;
+        }
+
+        .fake-dots { display: flex; gap: 8px; margin-bottom: 16px; }
+        .fake-dots span {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.18);
+        }
+
+        .fake-canvas {
+            border-radius: 24px;
+            border: 1px solid rgba(52,211,153,0.12);
+            padding: 20px;
+            background: linear-gradient(180deg, #07131f, #0b1626);
+        }
+
+        h2 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1.04;
+            letter-spacing: -0.05em;
+        }
+
+        .section {
+            margin-top: 24px;
+            padding: 28px;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--muted);
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+        }
+
+        .grid-4, .grid-2 {
+            display: grid;
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+        .card {
+            border: 1px solid var(--line);
+            background: rgba(255,255,255,0.04);
+            border-radius: 24px;
+            padding: 20px;
+        }
+
+        .card.problem .eyebrow { color: var(--danger); }
+
+        .card h3 {
+            margin: 14px 0 0;
+            font-size: 20px;
+            line-height: 1.3;
+        }
+
+        .card p, .section p {
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+
+        .price {
+            margin-top: 14px;
+            font-size: clamp(3rem, 7vw, 5rem);
+            line-height: 1;
+            letter-spacing: -0.08em;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .center { text-align: center; }
+
+        footer {
+            margin-top: 26px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .hero-wrap,
+            .preview-grid,
+            .grid-4,
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-links a { padding: 10px 12px; font-size: 12px; }
+        }
+
+        @media (max-width: 768px) {
+            .shell { width: min(100% - 20px, 1200px); padding-top: 16px; }
+            .nav {
+                flex-wrap: wrap;
+                padding: 14px;
+                border-radius: 24px;
+            }
+
+            .nav-links, .nav-actions .btn { display: none; }
+            .mobile-toggle { display: inline-flex; align-items: center; justify-content: center; }
+            .hero-wrap, .preview-grid, .grid-4, .grid-2 { grid-template-columns: 1fr; }
+            .preview-left { border-right: 0; border-bottom: 1px solid var(--line); }
+            .hero, .section { padding: 22px; }
+            h1 { font-size: clamp(2.4rem, 13vw, 4rem); }
+            h2 { font-size: clamp(1.8rem, 9vw, 2.7rem); }
+            .lead { font-size: 16px; }
+            .cta-row .btn { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .brand-copy span { font-size: 16px; }
+            .mark { width: 40px; height: 40px; }
+            .card, .section { padding: 18px; border-radius: 22px; }
+            .btn { min-height: 46px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <header class="panel nav">
+            <a class="brand" href="#top">
+                <span class="mark">LK</span>
+                <span class="brand-copy">
+                    <strong>novadigital.id</strong>
+                    <span>Launchkit</span>
+                </span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#fitur">Fitur</a>
+                <a href="#use-case">Use Case</a>
+                <a href="#harga">Harga</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a class="btn btn-secondary" href="https://github.com/barwp/LaunchKit">GitHub Repo</a>
+                <a class="btn btn-primary" href="https://github.com/barwp/LaunchKit">Lihat Source</a>
+                <button class="mobile-toggle" type="button" aria-label="Toggle menu" onclick="document.getElementById('mobileMenu').classList.toggle('is-open')">☰</button>
+            </div>
+
+            <div id="mobileMenu" class="menu">
+                <a href="#fitur">Fitur</a>
+                <a href="#use-case">Use Case</a>
+                <a href="#harga">Harga</a>
+                <a href="#faq">FAQ</a>
+                <a href="https://github.com/barwp/LaunchKit">GitHub Repo</a>
+            </div>
+        </header>
+
+        <section class="hero-wrap">
+            <article class="hero">
+                <span class="badge">One-time access • Rp 99.000</span>
+                <h1>Jualan lebih cepat dengan landing page builder siap pakai.</h1>
+                <p class="lead">Launchkit by novadigital.id membantu Anda bikin landing page profesional untuk produk digital, jasa, dan layanan pembuatan landing page tanpa perlu coding atau biaya bulanan.</p>
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="https://github.com/barwp/LaunchKit">Get Source</a>
+                    <a class="btn btn-secondary" href="#preview">Lihat Demo</a>
+                </div>
+                <div class="chip-row">
+                    <span class="chip">Permanent Access</span>
+                    <span class="chip">No Monthly Fee</span>
+                    <span class="chip">Drag & Drop Builder</span>
+                </div>
+            </article>
+
+            <article id="preview" class="panel preview-grid">
+                <div class="preview-left">
+                    <div class="fake-browser">
+                        <div class="fake-dots"><span></span><span></span><span></span></div>
+                        <div class="fake-canvas">
+                            <span class="badge">Launchkit Builder</span>
+                            <h3 style="margin:16px 0 0;font-size:clamp(2rem,5vw,3.2rem);line-height:1.02;">Landing page untuk jualan digital product dan jasa.</h3>
+                            <p style="margin-top:14px;">Drag block, edit copy, upload image, lalu export HTML yang siap dipasang di Scalev, Lynk.id, Wordpress, atau hosting manual.</p>
+                            <div class="grid-2" style="margin-top:18px;">
+                                <div class="card">Responsive layout</div>
+                                <div class="card">Ready templates</div>
+                                <div class="card">Fast setup</div>
+                                <div class="card">Payment-ready blocks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="preview-right">
+                    <div class="card">
+                        <div class="eyebrow">Harga</div>
+                        <h3>Rp 99.000</h3>
+                    </div>
+                    <div class="card" style="margin-top:12px;">
+                        <div class="eyebrow">Akses</div>
+                        <h3>Sekali bayar, selamanya</h3>
+                    </div>
+                    <div class="card" style="margin-top:12px;">
+                        <div class="eyebrow">Cocok untuk</div>
+                        <h3>Produk digital & jasa</h3>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="grid-4">
+            <article class="panel card problem">
+                <div class="eyebrow">Problem</div>
+                <h3>Tidak bisa bikin landing page sendiri</h3>
+            </article>
+            <article class="panel card problem">
+                <div class="eyebrow">Problem</div>
+                <h3>Ribet coding dan setup halaman jualan</h3>
+            </article>
+            <article class="panel card problem">
+                <div class="eyebrow">Problem</div>
+                <h3>Belum punya sistem jualan yang rapi</h3>
+            </article>
+            <article class="panel card problem">
+                <div class="eyebrow">Problem</div>
+                <h3>Tools builder lain terlalu mahal</h3>
+            </article>
+        </section>
+
+        <section class="panel section">
+            <div class="eyebrow">Solusi</div>
+            <h2 style="margin-top:14px;">Launchkit membuat proses bikin landing page terasa simpel dan cepat.</h2>
+            <p style="margin-top:16px;">Anda tinggal isi konten, atur visual, lalu pakai builder drag & drop untuk menyesuaikan hasil. Cocok buat jual digital product, jasa desain, jasa landing page, sampai kebutuhan freelancer atau creator.</p>
+            <div class="grid-2">
+                <article class="card"><h3>No coding needed</h3><p>Semua diatur dari visual editor.</p></article>
+                <article class="card"><h3>Ready-to-use system</h3><p>Sudah ada struktur landing page yang conversion-focused.</p></article>
+                <article class="card"><h3>Responsive output</h3><p>Hasil final lebih rapi di desktop, tablet, dan mobile.</p></article>
+                <article class="card"><h3>Fast launch</h3><p>Dari ide ke halaman jualan dalam waktu singkat.</p></article>
+            </div>
+        </section>
+
+        <section id="fitur" class="grid-2">
+            <article class="panel section">
+                <div class="eyebrow">Features</div>
+                <h2 style="margin-top:14px;">Fitur utama Launchkit</h2>
+                <div class="grid-2">
+                    <div class="card">Drag & drop builder</div>
+                    <div class="card">Responsive design</div>
+                    <div class="card">Ready templates</div>
+                    <div class="card">Payment-ready blocks</div>
+                    <div class="card">Fast setup</div>
+                </div>
+            </article>
+
+            <article id="use-case" class="panel section">
+                <div class="eyebrow">Use Cases</div>
+                <h2 style="margin-top:14px;">Cocok untuk</h2>
+                <div class="grid-2">
+                    <div class="card">Jual produk digital</div>
+                    <div class="card">Jasa desain</div>
+                    <div class="card">Jasa pembuatan landing page</div>
+                    <div class="card">Freelancer / creator</div>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel section">
+            <div class="eyebrow">Benefits</div>
+            <h2 style="margin-top:14px;">Simple, cepat, dan hemat biaya</h2>
+            <div class="grid-4">
+                <article class="card"><h3>Hemat biaya</h3><p>Tidak ada subscription bulanan.</p></article>
+                <article class="card"><h3>Cepat launch</h3><p>Lebih cepat publish halaman jualan.</p></article>
+                <article class="card"><h3>Langsung jualan</h3><p>CTA dan struktur halaman sudah siap pakai.</p></article>
+                <article class="card"><h3>Simple & powerful</h3><p>Builder tetap ringan tapi fleksibel.</p></article>
+            </div>
+        </section>
+
+        <section id="harga" class="panel section center">
+            <div class="eyebrow">Pricing</div>
+            <div class="price">Rp 99.000</div>
+            <p>One-time payment · Permanent access · No monthly fee</p>
+            <div class="cta-row" style="justify-content:center;">
+                <a class="btn btn-primary" href="https://github.com/barwp/LaunchKit">Lihat Source di GitHub</a>
+            </div>
+        </section>
+
+        <section id="faq" class="panel section">
+            <div class="eyebrow">FAQ</div>
+            <h2 style="margin-top:14px;">Pertanyaan umum</h2>
+            <div class="grid-2">
+                <article class="card"><h3>Apakah perlu coding?</h3><p>Tidak. Builder dirancang supaya Anda bisa edit visual dan konten langsung dari UI.</p></article>
+                <article class="card"><h3>Bisa untuk jual jasa?</h3><p>Bisa. Cocok untuk jasa desain, jasa landing page, dan layanan digital lainnya.</p></article>
+                <article class="card"><h3>Bisa dipakai selamanya?</h3><p>Ya. Produk ini one-time payment dan aksesnya permanen.</p></article>
+                <article class="card"><h3>Apakah full app jalan di GitHub Pages?</h3><p>Tidak. GitHub Pages hanya untuk landing static. Full builder Laravel tetap perlu hosting PHP/MySQL.</p></article>
+            </div>
+        </section>
+
+        <footer>
+            Launchkit by novadigital.id • Static GitHub Pages demo for public landing • Full Laravel app lives in this repository
+        </footer>
+    </div>
+
+    <script>
+        document.querySelectorAll('#mobileMenu a').forEach((link) => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobileMenu').classList.remove('is-open');
+            });
+        });
+    </script>
+</body>
+</html>

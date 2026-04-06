@@ -45,7 +45,8 @@ class ProjectController extends Controller
         $projects = $request->user()
             ->projects()
             ->latest()
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         return view('dashboard', [
             'projects' => $projects,
@@ -125,7 +126,7 @@ class ProjectController extends Controller
         $this->authorizeProject($project, $request);
 
         $payload = $request->validate([
-            'asset' => ['required', 'image', 'max:6144'],
+            'asset' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144'],
         ]);
 
         $path = $payload['asset']->store('launchkit/projects/'.$project->id, 'public');
@@ -230,8 +231,8 @@ class ProjectController extends Controller
             'background_mode' => ['nullable', 'string', 'max:100'],
             'font_preference' => ['nullable', 'string', 'max:100'],
             'spacing_preset' => ['nullable', 'string', 'max:100'],
-            'logo' => ['nullable', 'image', 'max:4096'],
-            'hero_image' => ['nullable', 'image', 'max:6144'],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'hero_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144'],
         ]);
     }
 

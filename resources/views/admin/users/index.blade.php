@@ -65,6 +65,12 @@
                 </div>
             @endforelse
         </div>
+
+        @if ($pendingUsers->hasPages())
+            <div class="mt-6">
+                {{ $pendingUsers->links() }}
+            </div>
+        @endif
     </section>
 
     <section class="mt-8 panel p-8">
@@ -121,5 +127,11 @@
                 </article>
             @endforeach
         </div>
+
+        @if ($users->hasPages())
+            <div class="mt-6">
+                {{ $users->links() }}
+            </div>
+        @endif
     </section>
 @endsection
